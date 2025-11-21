@@ -1,3 +1,4 @@
+// src/context/AuthContext.js
 import React, { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       setUsuario(null);
    };
 
-   // verificar token al iniciar app (auto-refresh / auto-verify)
+   // Verificar token al iniciar la app (auto-refresh / auto-verify)
    const verificar = async () => {
       const t = localStorage.getItem("token");
       if (!t) {
@@ -42,23 +43,23 @@ export const AuthProvider = ({ children }) => {
          if (data?.valido) {
             setUsuario(data.usuario);
             setToken(t);
-            console.log("authcontext", data)
          } else {
             logout();
          }
       } catch {
          logout();
-      }finally {
+      } finally {
          setCargando(false);
       }
    };
 
-   useEffect(() => {verificar(); }, []);
+   useEffect(() => { verificar(); }, []);
 
-   return(
+   return (
       <AuthContext.Provider value={{ usuario, token, cargando, login, logout, verificar }}>
          {children}
       </AuthContext.Provider>
    );
 };
+
 
