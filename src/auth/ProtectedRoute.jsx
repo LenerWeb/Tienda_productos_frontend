@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "./useAuth";
 
 export default function ProtectedRoute({ children }) {
@@ -8,7 +8,8 @@ export default function ProtectedRoute({ children }) {
 
     if (cargando) return <div>Cargando...</div>;
     if (!usuario) return <Navigate to="/login" replace />;
-    return children;
+    if (children) return children;
+    return <Outlet />;
 }
 
 

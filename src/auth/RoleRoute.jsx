@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "./useAuth";
 
 export default function RoleRoute({ children, roles = []}) {
@@ -8,5 +8,6 @@ export default function RoleRoute({ children, roles = []}) {
     if (cargando) return <div>Cargando...</div>;
     if (!usuario) return <Navigate to="/login" replace />;
     if (!roles.includes(usuario.rol)) return <Navigate to="/403" replace />;
-    return children;
+    if (children) return children;
+    return <Outlet/>;
 }
