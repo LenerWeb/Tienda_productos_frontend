@@ -1,56 +1,56 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
 import { resetPassword } from "../../api/usuariosService";
-import { msgSuccess, msgError } from "../../utils/alert";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function UsuarioReset() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      msgError("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
-
     try {
       await resetPassword(id, password);
-      msgSuccess("Contraseña actualizada");
+      Swal.fire("Éxito", "Contraseña actualizada", "success");
       navigate("/usuarios");
-    } catch (e) {
-      msgError("Error reseteando contraseña");
+    } catch (err) {
+      Swal.fire("Error", "No se pudo actualizar la contraseña", "error");
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white p-6 rounded shadow mt-6">
-      <h1 className="text-2xl font-bold text-gray-700 mb-4 text-center">
-        Reset de Contraseña
-      </h1>
+    <div className="max-w-lg mx-auto p-6 bg-white shadow rounded mt-6">
+      <h2 className="text-xl font-bold mb-4">Resetear Contraseña</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
 
         <div>
-          <label className="block font-medium mb-1">Nueva Contraseña:</label>
+          <label className="block">Nueva contraseña</label>
           <input
             type="password"
-            className="w-full border p-2 rounded"
+            className="w-full border px-3 py-2 rounded"
+            minLength="6"
+            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
         </div>
 
-        <button
-          className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          type="submit"
-        >
-          Actualizar Contraseña
-        </button>
+        <div className="flex gap-3">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded">
+            Actualizar
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/usuarios")}
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Cancelar
+          </button>
+        </div>
 
       </form>
     </div>

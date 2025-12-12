@@ -1,163 +1,107 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { listarUsuarios, desactivarUsuario } from "../../api/usuariosService";
-import { msgSuccess, msgError, msgConfirm } from "../../utils/alert";
+import Swal from "sweetalert2";
 
 export default function UsuariosPage() {
-  const navigate = useNavigate();
-
   const [usuarios, setUsuarios] = useState([]);
-  const [cargando, setCargando] = useState(true);
 
-  // ==========================
-  //   Cargar usuarios
-  // ==========================
-  const cargarUsuarios = async () => {
-    try {
-      setCargando(true);
-      const data = await listarUsuarios();
-      console.log("USUARIOS RECIBIDOS EN LA TABLA:", data);
+ //   Cargar usuarios
+  const cargar = async () => {
+    const data = await listarUsuarios();
       setUsuarios(data);
-
-    } catch (e) {
-      msgError("Error al cargar usuarios");
-    } finally {
-      setCargando(false);
-    }
   };
-
+    
   useEffect(() => {
-    cargarUsuarios();
+    cargar();
   }, []);
 
-  // ==========================
   //   Cambiar estado
-  // ==========================
-  const handleCambiarEstado = async (id_usuario, estadoActual) => {
-    const nuevoEstado = estadoActual === "activo" ? "inactivo" : "activo";
+  const cambiarEstado = async(user) => {
+    const nuevoEstado = user.estado === "activo" ? "inactivo" : "activo";
+    
+    const confirmar = await Swal.fire({
+      title: "Confirmar",
+      text: `¿Deseas cambiar el estado a ${nuevoEstado}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí",
+    });
 
-    const r = await msgConfirm(
-      `¿Deseas cambiar el estado del usuario a "${nuevoEstado}"?`
-    );
-
-    if (!r.isConfirmed) return;
+    if (!confirmar.isConfirmed) return;
 
     try {
-      await desactivarUsuario(id_usuario, nuevoEstado); // ← CORREGIDO
-      msgSuccess("Estado actualizado correctamente");
-      cargarUsuarios();
-    } catch (e) {
-      msgError("Error al actualizar el estado del usuario");
+      await desactivarUsuario(user.id_usuario, nuevoEstado);
+      Swal.fire("Éxito", "Estado actualizado", "success");
+      cargar();
+    } catch {
+      Swal.fire("Error", "No se pudo cambiar el estado", "error");
     }
   };
 
-  // ==========================
-  //   UI Cargando
-  // ==========================
-  if (cargando) {
-    return (
-      <div className="text-center text-blue-600 font-bold py-8">
-        Cargando usuarios...
-      </div>
-    );
-  }
-
-  // ==========================
+  
   //   UI Principal
-  // ==========================
   return (
     <div className="p-6">
-      {/* Encabezado */}
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-700">
-          Gestión de Usuarios
-        </h1>
+      <div className="flex justify-between mb-4">
+        <h2 className="text-xl font-bold">Usuarios</h2>
 
-        <button
-          onClick={() => navigate("/usuarios/nuevo")}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+        <Link
+          to="/usuarios/nuevo"
+          className="bg-green-600 text-white px-4 py-2 rounded"
         >
-          + Crear Usuario
-        </button>
+          Nuevo Usuario
+        </Link>
       </div>
 
-      {/* Tabla */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border rounded-lg shadow-md">
-          <thead className="bg-gray-100">
-            <tr className="text-left">
-              <th className="p-3 border">ID</th>
-              <th className="p-3 border">Nombre</th>
-              <th className="p-3 border">Usuario</th>
-              <th className="p-3 border">Rol</th>
-              <th className="p-3 border">Estado</th>
-              <th className="p-3 border text-center">Acciones</th>
+      <table className="w-full border">
+        <thead className="bg-gray-200">
+          <tr>
+            <th className="border px-2">ID</th>
+            <th className="border px-2">Nombre</th>
+            <th className="border px-2">Usuario</th>
+            <th className="border px-2">Rol</th>
+            <th className="border px-2">Estado</th>
+            <th className="border px-2">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {usuarios.map((u) => (
+            <tr key={u.id_usuario}>
+              <td className="border px-2">{u.id_usuario}</td>
+              <td className="border px-2">{u.nombre}</td>
+              <td className="border px-2">{u.usuario}</td>
+              <td className="border px-2">{u.rol}</td>
+              <td className="border px-2">{u.estado}</td>
+              <td className="border px-2 space-x-2">
+
+                <Link
+                  to={`/usuarios/editar/${u.id_usuario}`}
+                  className="bg-blue-600 text-white px-3 py-1 rounded"
+                >
+                  Editar
+                </Link>
+
+                <Link
+                  to={`/usuarios/reset/${u.id_usuario}`}
+                  className="bg-yellow-600 text-white px-3 py-1 rounded"
+                >
+                  Reset
+                </Link>
+
+                <button
+                  onClick={() => cambiarEstado(u)}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  {u.estado === "activo" ? "Desactivar" : "Activar"}
+                </button>
+
+              </td>
             </tr>
-          </thead>
-
-          <tbody>
-            {usuarios.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center py-4 text-gray-500">
-                  No hay usuarios registrados
-                </td>
-              </tr>
-            ) : (
-              usuarios.map((u) => (
-                <tr key={u.id_usuario} className="hover:bg-gray-50">
-                  <td className="p-3 border">{u.id_usuario}</td>
-                  <td className="p-3 border">{u.nombre}</td>
-                  <td className="p-3 border">{u.usuario}</td>
-                  <td className="p-3 border capitalize">{u.rol}</td>
-
-                  <td
-                    className={`p-3 border font-semibold ${
-                      u.estado === "activo"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {u.estado}
-                  </td>
-
-                  <td className="p-3 border text-center space-x-2">
-
-                    {/* Editar */}
-                    <button
-                      onClick={() => navigate(`/usuarios/editar/${u.id_usuario}`)}
-                      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                      Editar
-                    </button>
-
-                    {/* Reset Contraseña */}
-                    <button
-                      onClick={() => navigate(`/usuarios/reset/${u.id_usuario}`)}
-                      className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                    >
-                      Reset
-                    </button>
-
-                    {/* Cambiar estado */}
-                    <button
-                      onClick={() => handleCambiarEstado(u.id_usuario, u.estado)}
-                      className={`px-3 py-1 text-white rounded 
-                        ${
-                          u.estado === "activo"
-                            ? "bg-red-600 hover:bg-red-700"
-                            : "bg-green-600 hover:bg-green-700"
-                        }`}
-                    >
-                      {u.estado === "activo" ? "Desactivar" : "Activar"}
-                    </button>
-
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
