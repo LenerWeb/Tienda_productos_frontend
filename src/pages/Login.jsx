@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import useAuth from "../auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { apiPost } from "../api/apiClient";
+
 
 export default function Login() {
    const { login } = useAuth();
@@ -15,14 +17,10 @@ export default function Login() {
       setLoading(true);
 
       try {
-         const res = await fetch("http://localhost:4000/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ usuario, contrasena }),
+         const data = await apiPost("/api/auth/login", {
+            usuario,
+            contrasena,
          });
-
-         const data = await res.json();
-         if (!res.ok) throw new Error(data?.mensaje || "Login falló");
 
          login(data.token, data.usuario);
          navigate("/");
@@ -35,19 +33,17 @@ export default function Login() {
 
    return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
          <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-bold text-center mb-6">Iniciar Sesión</h2>
 
             <form onSubmit={submit} className="space-y-4">
-
                <div>
                   <label className="block mb-1 font-medium">Usuario</label>
                   <input
                      value={usuario}
                      onChange={(e) => setUsuario(e.target.value)}
                      required
-                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                     className="w-full border rounded px-3 py-2"
                   />
                </div>
 
@@ -58,18 +54,17 @@ export default function Login() {
                      value={contrasena}
                      onChange={(e) => setContrasena(e.target.value)}
                      required
-                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                     className="w-full border rounded px-3 py-2"
                   />
                </div>
 
                <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:bg-blue-400"
+                  className="w-full bg-blue-600 text-white py-2 rounded disabled:bg-blue-400"
                >
                   {loading ? "Ingresando..." : "Entrar"}
                </button>
-
             </form>
          </div>
       </div>
