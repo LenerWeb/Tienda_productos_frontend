@@ -1,81 +1,31 @@
-import { getToken } from "./apiClient";
+import { apiGet, apiPost, apiPut } from "./apiClient";
 
-const BASE_URL = "http://localhost:4000/api/usuarios";
-
-const authHeaders = () => ({
-  Authorization: "Bearer " + getToken(),
-});
 
 // LISTAR
-export const listarUsuarios = async () => {
-  const res = await fetch(`${BASE_URL}/`, { 
-    headers: authHeaders(),
-  });
-
-  return await res.json();
-};
+export const listarUsuarios = () => apiGet("/api/usuarios/");
 
 
 // OBTENER POR ID
-export const obtenerUsuario = async (id_usuario) => {
-  const res = await fetch(`${BASE_URL}/${id_usuario}`, {
-    headers: authHeaders(),
-  });
-
-  if (!res.ok) throw new Error("Error obteniendo usuario");
-  return await res.json();
-};
+export const obtenerUsuario = (id_usuario) => 
+  apiGet(`/api/usuarios/${id_usuario}`);
 
 
 // CREAR
-export const crearUsuario = async (usuarioData) => {
-  const res = await fetch(`${BASE_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify(usuarioData), // { nombre, usuario, contrasena, rol }
-  });
-
-  if (!res.ok) throw new Error("Error creando usuario");
-  return await res.json();
-};
+export const crearUsuario = (usuarioData) => 
+  apiPost("/api/usuarios/register", usuarioData);
 
 
 // ACTUALIZAR
-export const actualizarUsuario = async (id_usuario, usuarioData) => {
-  const res = await fetch(`${BASE_URL}/${id_usuario}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify(usuarioData),
-  });
-
-  if (!res.ok) throw new Error("Error actualizando usuario");
-  return await res.json();
-};
+export const actualizarUsuario = (id_usuario, usuarioData) => 
+  apiPut(`/api/usuarios/${id_usuario}`, usuarioData);
 
 
 // RESET PASSWORD
-//  *** ESTA ES LA PARTE CRÍTICA ***
-export const resetPassword = async (id_usuario, password) => {
-  const res = await fetch(`${BASE_URL}/reset/${id_usuario}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({ password }),   // 🔥 CORREGIDO AQUÍ
-  });
-
-  if (!res.ok) throw new Error("Error reseteando contraseña");
-  return await res.json();
-};
+export const resetPassword = (id_usuario, password) => 
+  apiPost(`/api/usuarios/reset/${id_usuario}`, { password });
 
 
 // CAMBIAR ESTADO
 // Activar o desactivar usuario
-export const desactivarUsuario = async (id_usuario, estado) => {
-  const res = await fetch(`${BASE_URL}/desactivar/${id_usuario}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({ estado }),
-  });
-
-  if (!res.ok) throw new Error("Error cambiando estado del ususario");
-  return await res.json();
-};
+export const desactivarUsuario = (id_usuario, estado) => 
+  apiPut(`/api/usuarios/desactivar/${id_usuario}`, { estado});
