@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { resetPassword } from "../../api/usuariosService";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
+import { msgSuccess, msgError } from "../../utils/alert";
 
 export default function UsuarioReset() {
   const { id } = useParams();
@@ -13,10 +13,10 @@ export default function UsuarioReset() {
 
     try {
       await resetPassword(id, password);
-      Swal.fire("Éxito", "Contraseña actualizada", "success");
+      msgSuccess("Contraseña actualizada");
       navigate("/usuarios");
     } catch (err) {
-      Swal.fire("Error", "No se pudo actualizar la contraseña", "error");
+      msgError(err?.message || "No se pudo actualizar la contraseña");
     }
   };
 

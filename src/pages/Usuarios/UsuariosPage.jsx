@@ -1,45 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarUsuarios, desactivarUsuario } from "../../api/usuariosService";
-import Swal from "sweetalert2";
+import { msgSuccess, msgError, msgConfirm } from "../../utils/alert";
 
 export default function UsuariosPage() {
   const [usuarios, setUsuarios] = useState([]);
 
- //   Cargar usuarios
+  //   Cargar usuarios
   const cargar = async () => {
     const data = await listarUsuarios();
-      setUsuarios(data);
+    setUsuarios(data);
   };
-    
+
   useEffect(() => {
     cargar();
   }, []);
 
   //   Cambiar estado
-  const cambiarEstado = async(user) => {
+  const cambiarEstado = async (user) => {
     const nuevoEstado = user.estado === "activo" ? "inactivo" : "activo";
-    
-    const confirmar = await Swal.fire({
-      title: "Confirmar",
-      text: `¿Deseas cambiar el estado a ${nuevoEstado}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí",
-    });
 
+    const confirmar = await msgConfirm(`¿Deseas cambiar el estado a ${nuevoEstado}?`);
     if (!confirmar.isConfirmed) return;
-
     try {
       await desactivarUsuario(user.id_usuario, nuevoEstado);
-      Swal.fire("Éxito", "Estado actualizado", "success");
+      msgSuccess("Estado actualizado");
       cargar();
-    } catch {
-      Swal.fire("Error", "No se pudo cambiar el estado", "error");
+    } catch (e) {
+      msgError(e?.message || "No se pudo cambiar el estado");
     }
   };
 
-  
   //   UI Principal
   return (
     <div className="p-6">

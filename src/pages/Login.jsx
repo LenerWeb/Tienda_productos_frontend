@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useAuth from "../auth/useAuth";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { msgError } from "../utils/alert";
 import { apiPost } from "../api/apiClient";
 
 
@@ -25,7 +25,7 @@ export default function Login() {
          login(data.token, data.usuario);
          navigate("/");
       } catch (err) {
-         Swal.fire("Error", err.message, "error");
+         msgError(err?.message || "Error en login");
       } finally {
          setLoading(false);
       }

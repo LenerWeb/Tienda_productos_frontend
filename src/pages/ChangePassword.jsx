@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useAuth from "../auth/useAuth";
+import { msgError, msgSuccess } from "../utils/alert";
 
 export default function ChangePassword() {
    const { token, logout } = useAuth();
@@ -10,7 +11,10 @@ export default function ChangePassword() {
 
    const submit = async (e) => {
       e.preventDefault();
-      if (newPass !== confirmPass) return alert("Las contraseñas no coinciden");
+      if (newPass !== confirmPass) {
+         msgError("Las contraseñas no coinciden");
+         return;
+      }
       setLoading(true);
       try {
          const res = await fetch("/api/usuarios/change-password", {
@@ -23,10 +27,10 @@ export default function ChangePassword() {
          });
          const data = await res.json();
          if (!res.ok) throw new Error(data?.mensaje || "Error");
-         alert("Contraseña actualizada. Vuelva a iniciar sesion.");
+         msgSuccess("Contraseña actualizada. Vuelva a iniciar sesión.");
          logout();         
       } catch (err) {
-         alert(err.message);
+         msgError(err?.message || "Error al cambiar contraseña");
       } finally {
          setLoading(false);
       }

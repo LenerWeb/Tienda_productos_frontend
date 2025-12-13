@@ -5,7 +5,7 @@ import {
   actualizarUsuario,
   obtenerUsuario,
 } from "../../api/usuariosService";
-import Swal from "sweetalert2";
+import { msgSuccess, msgError } from "../../utils/alert";
 
 export default function UsuarioForm() {
   const { id } = useParams();
@@ -33,7 +33,7 @@ export default function UsuarioForm() {
         });
       })
       .catch (() => {
-        Swal.fire("Error", "No de pudo cargar el usuario", "error");
+        msgError("No se pudo cargar el usuario");
       });
     }
   }, [id, esEdicion]);
@@ -44,14 +44,14 @@ export default function UsuarioForm() {
     try {
       if (esEdicion) {
         await actualizarUsuario(id, form);
-        Swal.fire("Éxito", "Usuario actualizado", "success");
+        msgSuccess("Usuario actualizado");
       } else {
         await crearUsuario(form);
-        Swal.fire("Éxito", "Usuario creado", "success");
+        msgSuccess("Usuario creado");
       }
       navigate("/usuarios");
-    } catch {
-      Swal.fire("Error", "No se pudo guardar el usuario", "error");
+    } catch (e) {
+      msgError(e?.message || "No se pudo guardar el usuario");
     }
   };
   
