@@ -24,3 +24,13 @@ export const actualizarProducto = async (id, data) => {
 export const eliminarProducto = async (id) => {
     return await apiDelete(`/api/productos/${id}`);
 };
+
+// Historial de compras por producto
+export const obtenerHistorialComprasProducto = async(id_producto) => {
+    return await apiGet(`/api/productos/${id_producto}/compras`);
+};
+
+// Historial de ventas por producto
+export const obtenerHistorialVentasProducto = async (id_producto) => {
+    return await apiGet(`/api/productos/${id_producto}/ventas`);
+};

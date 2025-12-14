@@ -15,6 +15,7 @@ import UsuarioReset from "../pages/Usuarios/UsuarioReset";
 // Productos
 import ProductosPage from "../pages/Productos/ProductosPage";
 import ProductosForm from "../pages/Productos/ProductosForm";
+import ProductosHistorial from "../pages/Productos/ProductosHistorial";
 
 // Error
 /* import Error403 from "../pages/Error403"; */
@@ -60,6 +61,7 @@ export default function AppRoutes() {
                 >
                     <Route path="/productos/nuevo" element={<ProductosForm />} />
                     <Route path="/productos/editar/:id" element={<ProductosForm />} />
+                    <Route path="/productos/historial/:id" element={<ProductosHistorial />} />
                 </Route>
 
                 {/* 🔜 Historial (futuro) */}

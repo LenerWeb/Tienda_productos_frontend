@@ -102,7 +102,7 @@ export default function ProductosPage() {
                                         onClick={() =>
                                             navigate(`/productos/historial/${p.id_producto}`)
                                         }
-                                        className="text-indigo-600"
+                                        className="text-indigo-600 underline"
                                     >
                                         Historial
                                     </button>
