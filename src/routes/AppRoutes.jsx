@@ -12,6 +12,10 @@ import UsuariosPage from "../pages/Usuarios/UsuariosPage";
 import UsuarioForm from "../pages/Usuarios/UsuarioForm";
 import UsuarioReset from "../pages/Usuarios/UsuarioReset";
 
+// Productos
+import ProductosPage from "../pages/Productos/ProductosPage";
+import ProductosForm from "../pages/Productos/ProductosForm";
+
 // Error
 /* import Error403 from "../pages/Error403"; */
 
@@ -27,9 +31,9 @@ export default function AppRoutes() {
             <Route
                 path="/change-password"
                 element={
-                    
-                        <ChangePassword />
-                    
+
+                    <ChangePassword />
+
                 }
             />
 
@@ -48,7 +52,20 @@ export default function AppRoutes() {
                     <Route path="/usuarios/reset/:id" element={<UsuarioReset />} />
                 </Route>
 
-                            
+                {/* PRODUCTOS */}
+                <Route path="/productos" element={<ProductosPage />} />
+
+                <Route
+                    element={<RoleRoute roles={["admin", "almacen"]} />}
+                >
+                    <Route path="/productos/nuevo" element={<ProductosForm />} />
+                    <Route path="/productos/editar/:id" element={<ProductosForm />} />
+                </Route>
+
+                {/* 🔜 Historial (futuro) */}
+                {/* 
+                    <Route path="/productos/historial/:id" element={<ProductosHistorial />} />
+                */}
 
             </Route>
 
@@ -56,7 +73,7 @@ export default function AppRoutes() {
             {/* <Route path="/403" element={<Error403 />} /> */}
 
             {/* 404 (Opcional) */}
-            {/* <Route path="*" element={<Error403/>}/> */}    
+            {/* <Route path="*" element={<Error403/>}/> */}
         </Routes >
     );
 }

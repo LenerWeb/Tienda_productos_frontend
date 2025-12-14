@@ -58,5 +58,16 @@ export async function apiPut(url, body) {
   return manejarError(res);
 }
 
+export async function apiDelete(url, body) {
+  const res = await fetch(`${BASE_URL}${url}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + getToken(),
+    },
+    body: JSON.stringify(body),
+  });
 
+  return manejarError(res);
+}
 
