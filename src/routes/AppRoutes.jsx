@@ -17,6 +17,10 @@ import ProductosPage from "../pages/Productos/ProductosPage";
 import ProductosForm from "../pages/Productos/ProductosForm";
 import ProductosHistorial from "../pages/Productos/ProductosHistorial";
 
+// Compras
+import ComprasPage from "../pages/Compras/ComprasPage";
+import DetalleCompraPage from "../pages/Compras/DetalleCompraPage";
+
 // Error
 /* import Error403 from "../pages/Error403"; */
 
@@ -63,6 +67,10 @@ export default function AppRoutes() {
                     <Route path="/productos/editar/:id" element={<ProductosForm />} />
                     <Route path="/productos/historial/:id" element={<ProductosHistorial />} />
                 </Route>
+
+                <Route path="/compras" element={<ComprasPage />} />
+                <Route path="/compras/:id" element={<DetalleCompraPage />} />
+
 
                 {/* 🔜 Historial (futuro) */}
                 {/* 
